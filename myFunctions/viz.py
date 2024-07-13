@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import precision_recall_curve, PrecisionRecallDisplay
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.model_selection import cross_val_score, ShuffleSplit
 
 def plot_histogram_with_stats(df: pd.DataFrame, 
                               columns: list[str] = None,
@@ -324,4 +325,51 @@ def plot_precision_recall(y_true: pd.DataFrame,
     disp = PrecisionRecallDisplay(precision=precision, recall=recall)
     disp.plot()
     plt.title('Precision-Recall Curve')
+    plt.show()
+    
+def visualize_cross_validation(model: object, 
+                               X: pd.DataFrame, 
+                               y: pd.Series, 
+                               n_splits: int = 10, 
+                               test_size: float = 0.2, 
+                               random_state: int = 0
+) -> None:
+    """
+    Visualize cross-validation scores for a given model using a boxplot.
+
+    Parameters:
+    - model (object): The machine learning model to evaluate.
+    - X (pd.DataFrame): The feature matrix.
+    - y (pd.Series): The target variable.
+    - n_splits (int): Number of shuffle splits in cross-validation (default is 10).
+    - test_size (float): Proportion of the dataset to include in the test split (default is 0.2).
+    - random_state (int): Seed for reproducibility (default is 0).
+
+    Returns:
+    - None: This function does not return any value. It only displays a boxplot and prints summary statistics.
+
+    Example usage:
+    >>> from sklearn.linear_model import LinearRegression
+    >>> visualize_cross_validation(LinearRegression(), X, y)
+    """
+    # Creating a ShuffleSplit object
+    cross_validation = ShuffleSplit(n_splits=n_splits, test_size=test_size, random_state=random_state)
+
+    # Performing cross-validation and getting the scores
+    cv_scores = cross_val_score(model, X, y, cv=cross_validation)
+
+    # Displaying summary statistics
+    print(f'We ran {n_splits} shuffle splits')
+    print('Minimum cross-validation score:', min(cv_scores))
+    print('Mean cross-validation score:', cv_scores.mean())
+    print('Maximum cross-validation score:', max(cv_scores))
+
+    # Creating a boxplot to visualize the cross-validation scores
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(data=cv_scores)
+    plt.title(f'{model.__class__.__name__} Cross-Validation Scores', fontsize=14)
+    plt.xlabel('Cross-Validation Splits', fontsize=12)
+    plt.ylabel('Score', fontsize=12)  # Adjust the label based on your evaluation metric
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
