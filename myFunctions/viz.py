@@ -2,16 +2,17 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.metrics import precision_recall_curve, PrecisionRecallDisplay
 
-def plot_correlation_heatmap(df: pd.DataFrame,  # Input DataFrame containing numerical data
-                             annot: bool = True,  # If True, annotate the heatmap with correlation values
-                             fmt: str = '.2f',  # Format of the correlation values in the heatmap
-                             cmap: str = 'RdBu_r',  # Color map for the heatmap
-                             line_width: float = .5,  # Width of the lines separating the cells in the heatmap
-                             square: bool = True,  # If True, make the heatmap square by filling in the lower triangle
-                             annot_size: int = 12,  # Size of the annotations in the heatmap
-                             title: str = 'Correlation Heatmap'  # Title of the heatmap
-) -> None:  # This function plots a correlation heatmap of the numerical columns in the input DataFrame
+def plot_correlation_heatmap(df: pd.DataFrame,
+                             annot: bool = True,
+                             fmt: str = '.2f',
+                             cmap: str = 'RdBu_r',
+                             line_width: float = .5,
+                             square: bool = True,
+                             annot_size: int = 12,
+                             title: str = 'Correlation Heatmap' 
+) -> None:
     """
     This function plots a correlation heatmap of the numerical columns in the input DataFrame.
 
@@ -37,15 +38,15 @@ def plot_correlation_heatmap(df: pd.DataFrame,  # Input DataFrame containing num
     plt.title(title)
     plt.show()
     
-def plot_scatter(df: pd.DataFrame,  # Input DataFrame containing the data for the scatter plot
-                 x: str,  # String representing the x-axis column name
-                 y: str,  # String representing the y-axis column name
-                 hue: str = None,  # Optional string representing the categorical variable for coloring the plot (default is None)
-                 style: str = None,  # Optional string representing the categorical variable for styling the plot (default is None)
-                 size: int = None,  # Optional integer representing the size of the markers (default is None)
-                 palette: str = 'Set1',  # String representing the color palette for the plot
-                 alpha: float = 0.7  # Float representing the transparency of the markers (default is 0.7)
-) -> None:  # This function plots a scatter plot of the specified x and y variables from the input DataFrame
+def plot_scatter(df: pd.DataFrame,
+                 x: str,
+                 y: str,
+                 hue: str = None, 
+                 style: str = None,
+                 size: int = None,
+                 palette: str = 'Set1',
+                 alpha: float = 0.7
+) -> None:
     """
     This function plots a scatter plot of the specified x and y variables from the input DataFrame.
 
@@ -71,12 +72,12 @@ def plot_scatter(df: pd.DataFrame,  # Input DataFrame containing the data for th
     plt.title(f'Scatter plot of {y} vs {x}')
     plt.show()
     
-def plot_box(df: pd.DataFrame,  # Input DataFrame containing the data for the box plot
-             x: str,  # String representing the x-axis column name
-             y: str,  # String representing the y-axis column name
-             hue: str = None,  # Optional string representing the categorical variable for coloring the plot (default is None)
-             palette: str = 'Set1'  # String representing the color palette for the plot (default is 'Set1')
-) -> None:  # This function plots a box plot of the specified x and y variables from the input DataFrame
+def plot_box(df: pd.DataFrame,
+             x: str,
+             y: str,
+             hue: str = None,
+             palette: str = 'Set1'
+) -> None:
     """
     This function plots a box plot of the specified x and y variables from the input DataFrame.
 
@@ -99,10 +100,10 @@ def plot_box(df: pd.DataFrame,  # Input DataFrame containing the data for the bo
     plt.title(f'Box plot of {y} by {x}')
     plt.show()
     
-def plot_pair(df: pd.DataFrame,  # Input DataFrame containing the data for the pairplot
-              hue: str = None,  # Optional string representing the categorical variable for coloring the plot (default is None)
-              palette: str = 'Set1'  # String representing the color palette for the plot (default is 'Set1'
-) -> None:  # This function plots a pairplot of the input DataFrame
+def plot_pair(df: pd.DataFrame,
+              hue: str = None,
+              palette: str = 'Set1'
+) -> None:
     """
     This function plots a pairplot of the input DataFrame. A pairplot is a type of plot that displays the relationships between pairs of variables in a dataset.
 
@@ -142,4 +143,23 @@ def plot_feature_importance(importance_df: pd.DataFrame) -> None:
     plt.bar(importance_df['name'], importance_df['importance'], align='center')
     plt.xticks(rotation=90)
     plt.tight_layout()
+    plt.show()
+    
+def plot_precision_recall(y_true: pd.DataFrame,
+                          y_scores: pd.DataFrame
+) -> None:
+    """
+    Plot a precision-recall curve.
+
+    Parameters:
+    - y_true: True binary labels
+    - y_scores: Estimated probabilities or decision function
+
+    Returns:
+    - None
+    """
+    precision, recall, _ = precision_recall_curve(y_true, y_scores)
+    disp = PrecisionRecallDisplay(precision=precision, recall=recall)
+    disp.plot()
+    plt.title('Precision-Recall Curve')
     plt.show()
