@@ -36,3 +36,37 @@ def plot_correlation_heatmap(df: pd.DataFrame,  # Input DataFrame containing num
     sns.heatmap(correlation_matrix, mask=mask, annot=annot, fmt=fmt, cmap=cmap, center=0, linewidths=line_width, square=square, annot_kws={'size': annot_size})
     plt.title(title)
     plt.show()
+    
+def plot_scatter(df: pd.DataFrame,  # Input DataFrame containing the data for the scatter plot
+                 x: str,  # String representing the x-axis column name
+                 y: str,  # String representing the y-axis column name
+                 hue: str = None,  # Optional string representing the categorical variable for coloring the plot (default is None)
+                 style: str = None,  # Optional string representing the categorical variable for styling the plot (default is None)
+                 size: int = None,  # Optional integer representing the size of the markers (default is None)
+                 palette: str = 'Set1',  # String representing the color palette for the plot
+                 alpha: float = 0.7  # Float representing the transparency of the markers (default is 0.7)
+) -> None:  # This function plots a scatter plot of the specified x and y variables from the input DataFrame
+    """
+    This function plots a scatter plot of the specified x and y variables from the input DataFrame.
+
+    Parameters:
+    df (pd.DataFrame): The input DataFrame containing the data for the scatter plot.
+    x (str): String representing the x-axis column name.
+    y (str): String representing the y-axis column name.
+    hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None.
+    style (str, optional): Optional string representing the categorical variable for styling the plot. Default is None.
+    size (int, optional): Optional integer representing the size of the markers. Default is None.
+    palette (str, optional): String representing the color palette for the plot. Default is 'Set1'.
+    alpha (float, optional): Float representing the transparency of the markers. Default is 0.7.
+
+    Returns:
+    None: This function does not return any value. It only plots the scatter plot.
+
+    Example usage:
+    >>> # Plot a scatter plot of 'number_of_appliances' vs 'room_area_(sq._ft.)'
+    >>> plot_scatter(df, x='number_of_appliances', y='room_area')
+    """
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=df, x=x, y=y, hue=hue, style=style, size=size, palette=palette, alpha=alpha)
+    plt.title(f'Scatter plot of {y} vs {x}')
+    plt.show()
