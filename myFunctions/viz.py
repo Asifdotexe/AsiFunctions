@@ -132,6 +132,28 @@ def plot_heatmap(df: pd.DataFrame,
     plt.title(title)
     plt.show()
     
+def plot_count(df: pd.DataFrame, 
+               x: str, 
+               hue: str = None, 
+               palette: str = 'Set1'
+) -> None:
+    """
+    This function plots a count plot of the specified x variable from the input DataFrame. A count plot is a type of plot that displays the frequency or count of data points in different categories.
+   
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the count plot. This DataFrame should have numerical variables for the count plot to be effective.
+    - x (str): String representing the x-axis column name. This column will be used as the categories for the count plot.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None. If provided, the count plot will be colored based on the values in this column.
+    - palette (str, optional): String representing the color palette for the plot. Default is 'Set1'. This parameter specifies the colors that will be used for the bars in the plot.
+    
+    Returns:
+    - None: This function does not return any value. It only plots the count plot.
+    """
+    plt.figure(figsize=(10, 6))
+    sns.countplot(data=df, x=x, hue=hue, palette=palette)
+    plt.title(f'Count plot of {x}')
+    plt.show()
+    
 def plot_scatter(df: pd.DataFrame,
                  x: str,
                  y: str,
