@@ -186,6 +186,48 @@ def plot_line(df: pd.DataFrame,
     plt.title(f'Line plot of {y} over {x}')
     plt.show()
     
+import matplotlib.pyplot as plt
+
+def plot_roc_curve(fpr_list: list[float], 
+                   tpr_list: list[float], 
+                   roc_auc_list: list[float], 
+                   labels: list[str]
+) -> None:
+    """
+    Plot ROC curves for multiple models on the same graph.
+
+    Parameters:
+    - fpr_list (list): List of false positive rates for each model.
+    - tpr_list (list): List of true positive rates for each model.
+    - roc_auc_list (list): List of ROC AUC scores for each model.
+    - labels (list): List of labels for each model.
+
+    Returns:
+    - None: This function does not return any value. It only plots the ROC curves for the given models.
+
+    Example usage:
+    >>> # Plot ROC curves for multiple models on the same graph
+    >>> fpr_list = [0.1, 0.2, 0.3]
+    >>> tpr_list = [0.8, 0.7, 0.6]
+    >>> roc_auc_list = [0.9, 0.8, 0.7]
+    >>> labels = ['Model 1', 'Model 2', 'Model 3']
+    >>> plot_roc_curve(fpr_list, tpr_list, roc_auc_list, labels)
+    """
+    plt.figure(figsize=(10, 6))
+    for fpr, tpr, roc_auc, label in zip(fpr_list, tpr_list, roc_auc_list, labels):
+        plt.plot(fpr, tpr, label=f'{label} (area = {roc_auc:.2f})')
+
+    plt.plot([0, 1], [0, 1], 'k--', lw=2)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.0])
+    plt.xlabel('False Positive Rate', fontsize=12)
+    plt.ylabel('True Positive Rate', fontsize=12)
+    plt.title('Receiver Operating Characteristic (ROC) Curve', fontsize=14)
+    plt.legend(loc="lower right", fontsize=10)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+    
 def plot_feature_importance(importance_df: pd.DataFrame) -> None:
     """
     Plot feature importance for a model.
