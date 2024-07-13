@@ -120,3 +120,26 @@ def plot_pair(df: pd.DataFrame,  # Input DataFrame containing the data for the p
     """
     sns.pairplot(df, hue=hue, palette=palette)
     plt.show()
+    
+def plot_feature_importance(importance_df: pd.DataFrame) -> None:
+    """
+    Plot feature importance for a model.
+
+    Parameters:
+    - importance_df (pd.DataFrame): DataFrame with the top features and their importances that you get after running the `get_feature_importance` function
+
+    Returns:
+    - None: This function does not return any value. It only plots the feature importances.
+
+    Example usage:
+    >>> # Plot feature importances for a model
+    >>> import pandas as pd
+    >>> import matplotlib.pyplot as plt
+    >>> plot_feature_importance(importance_df)
+    """
+    plt.figure(figsize=(10, 6))
+    plt.title('Feature Importances')
+    plt.bar(importance_df['name'], importance_df['importance'], align='center')
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.show()
