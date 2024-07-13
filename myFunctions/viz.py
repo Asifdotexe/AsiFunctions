@@ -302,7 +302,37 @@ def plot_line(df: pd.DataFrame,
     plt.title(f'Line plot of {y} over {x}')
     plt.show()
     
-import matplotlib.pyplot as plt
+def plot_regression(df: pd.DataFrame, 
+                    x: str, 
+                    y: str, 
+                    hue: str = None, 
+                    palette: str = 'Set1',
+                    scatter_size: float = 10
+) -> None:
+    """
+    This function plots a regression plot of the specified x and y variables from the input DataFrame. A regression plot is a type of plot that displays the relationship between two variables over time or across different categories.
+    
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the regression plot. This DataFrame should have numerical variables for the regression plot to be effective.
+    - x (str): String representing the x-axis column name. This column will be used as the independent variable in the regression plot.
+    - y (str): String representing the y-axis column name. This column will be used as the dependent variable in the regression plot.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None. If provided, the regression plot will be colored based on the values in this column.
+    - palette (str, optional): String representing the color palette for the plot. Default is 'Set1'. This parameter specifies the colors that will be used for the regression line in the plot.
+    - scatter_size (float, optional): Float representing the size of the markers in the scatter plot. Default is 10.
+    
+    Returns:
+    - None: This function does not return any value. It only plots the regression plot.
+    
+    Example usage:
+    >>> # Plot a regression plot of 'energy_consumption_(kwh)' vs 'number_of_appliances'
+    >>> plot_regression(df, 'energy_consumption_(kwh)', 'number_of_appliances'
+    """
+    plt.figure(figsize=(10, 6))
+    sns.regplot(data=df, x=x, y=y, color='blue', scatter_kws={'s': scatter_size})
+    if hue:
+        sns.scatterplot(data=df, x=x, y=y, hue=hue, palette=palette, legend=False)
+    plt.title(f'Regression plot of {y} vs {x}')
+    plt.show()
 
 def plot_roc_curve(fpr_list: list[float], 
                    tpr_list: list[float], 
