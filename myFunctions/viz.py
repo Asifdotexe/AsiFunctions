@@ -5,6 +5,9 @@ import seaborn as sns
 from sklearn.metrics import precision_recall_curve, PrecisionRecallDisplay
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.model_selection import cross_val_score, ShuffleSplit
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.colors as mcolors
 
 def plot_histogram_with_stats(df: pd.DataFrame, 
                               columns: list[str] = None,
@@ -511,4 +514,44 @@ def visualize_cross_validation(model: object,
     plt.ylabel('Score', fontsize=12)  # Adjust the label based on your evaluation metric
     plt.grid(True)
     plt.tight_layout()
+    plt.show()
+    
+def plot_3d_scatter(df: pd.DataFrame, 
+                    x: str, 
+                    y: str, 
+                    z: str, 
+                    hue: str = None
+) -> None:
+    """
+    This function plots a 3D scatter plot of the specified x, y, and z variables from the input DataFrame. If the 'hue' parameter is provided, the scatter plot will be colored based on the values in the specified column.
+   
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the 3D scatter plot.
+    - x (str): String representing the x-axis column name.
+    - y (str): String representing the y-axis column name.
+    - z (str): String representing the z-axis column name.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. If provided, the scatter plot will be colored based on the values in the specified column.
+
+    Returns:
+    - None: This function does not return any value. It only plots the 3D scatter plot.
+    """
+    fig = plt.figure(figsize=(10, 6))
+    ax = fig.add_subplot(111, projection='3d')
+
+    if hue:
+        le = LabelEncoder()
+        hue_encoded = le.fit_transform(df[hue])
+        cmap = plt.get_cmap('viridis', len(le.classes_))
+        scatter = ax.scatter(df[x], df[y], df[z], c=hue_encoded, cmap=cmap)
+        cbar = plt.colorbar(scatter, ax=ax, pad=0.1)
+        cbar.set_ticks(range(len(le.classes_)))
+        cbar.set_ticklabels(le.classes_)
+        cbar.set_label(hue)
+    else:
+        scatter = ax.scatter(df[x], df[y], df[z])
+
+    ax.set_xlabel(x)
+    ax.set_ylabel(y)
+    ax.set_zlabel(z)
+    plt.title(f'3D scatter plot of {x}, {y}, and {z}')
     plt.show()
