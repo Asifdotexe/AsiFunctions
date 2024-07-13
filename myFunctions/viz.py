@@ -152,6 +152,40 @@ def plot_violin(df: pd.DataFrame,
     plt.title(f'Violin plot of {y} by {x}')
     plt.show()
     
+def plot_line(df: pd.DataFrame,
+              x: str, 
+              y: str, 
+              hue: str = None, 
+              style: str = None, 
+              markers: bool = False, 
+              dashes: bool = True, 
+              palette: str = 'Set1'
+) -> None:
+    """
+    This function plots a line plot of the specified x and y variables from the input DataFrame. A line plot is a type of plot that displays the relationship between two variables over time or across different categories.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the line plot. This DataFrame should have numerical variables for the line plot to be effective.
+    - x (str): String representing the x-axis column name.
+    - y (str): String representing the y-axis column name.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None.
+    - style (str, optional): Optional string representing the categorical variable for styling the plot. Default is None.
+    - markers (bool, optional): Boolean representing whether to display markers at each data point. Default is False.
+    - dashes (bool, optional): Boolean representing whether to display dashed lines between data points. Default is True.
+    - palette (str, optional): String representing the color palette for the plot. Default is 'Set1'.
+
+    Returns:
+    - None: This function does not return any value. It only plots the line plot.
+
+    Example usage:
+    >>> # Plot a line plot of 'number_of_appliances' vs 'room_area'
+    >>> plot_line(df, x='number_of_appliances', y='room_area')
+    """
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(data=df, x=x, y=y, hue=hue, style=style, markers=markers, dashes=dashes, palette=palette)
+    plt.title(f'Line plot of {y} over {x}')
+    plt.show()
+    
 def plot_feature_importance(importance_df: pd.DataFrame) -> None:
     """
     Plot feature importance for a model.
