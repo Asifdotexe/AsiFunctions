@@ -98,3 +98,25 @@ def plot_box(df: pd.DataFrame,  # Input DataFrame containing the data for the bo
     sns.boxplot(data=df, x=x, y=y, hue=hue, palette=palette)
     plt.title(f'Box plot of {y} by {x}')
     plt.show()
+    
+def plot_pair(df: pd.DataFrame,  # Input DataFrame containing the data for the pairplot
+              hue: str = None,  # Optional string representing the categorical variable for coloring the plot (default is None)
+              palette: str = 'Set1'  # String representing the color palette for the plot (default is 'Set1'
+) -> None:  # This function plots a pairplot of the input DataFrame
+    """
+    This function plots a pairplot of the input DataFrame. A pairplot is a type of plot that displays the relationships between pairs of variables in a dataset.
+
+    Parameters:
+    df (pd.DataFrame): The input DataFrame containing the data for the pairplot. This DataFrame should have numerical variables for the pairplot to be effective.
+    hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None.
+    palette (str, optional): String representing the color palette for the plot. Default is 'Set1'.
+
+    Returns:
+    None: This function does not return any value. It only plots the pairplot.
+
+    Example usage:
+    >>> # Plot a pairplot of the input DataFrame
+    >>> plot_pair(df)
+    """
+    sns.pairplot(df, hue=hue, palette=palette)
+    plt.show()
