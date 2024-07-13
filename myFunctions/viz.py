@@ -100,6 +100,38 @@ def plot_correlation_heatmap(df: pd.DataFrame,
     plt.title(title)
     plt.show()
     
+def plot_heatmap(df: pd.DataFrame,
+                 annot: bool = True,
+                 fmt: str = '.2f',
+                 cmap: str = 'coolwarm',
+                 columns: list[str] = None,
+                 title: str = 'Heatmap'
+) -> None:
+    """
+    This function plots a heatmap with annotations for the specified data series in the input DataFrame. A heatmap is a type of plot that displays the correlation between pairs of variables in a dataset.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data series for which to generate the heatmap. This DataFrame should have numerical variables for the heatmap to be effective.
+    - annot (bool, optional): Boolean representing whether to display annotations on the heatmap. Default is True.
+    - fmt (str, optional): String representing the format for the values displayed on the heatmap. Default is '.2f'.
+    - cmap (str, optional): String representing the color map for the heatmap. Default is 'coolwarm'.
+    - columns (list[str], optional): List of column names in the input DataFrame for which to generate the heatmap. If not provided, all numerical columns will be used. Default is None.
+    - title (str, optional): String representing the title for the heatmap. Default is 'Heatmap'.
+
+    Returns:
+    - None: This function does not return any value. It only plots the heatmap with annotations.
+
+    Example usage:
+    >>> # Plot a heatmap with annotations for the 'number_of_appliances' and 'room_area' columns
+    >>> plot_heatmap(df, annot=True, columns=['number_of_appliances', 'room_area'])
+    """
+    if columns is None:
+        columns = df.describe().columns.to_list()
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(df[columns], annot=annot, fmt=fmt, cmap=cmap)
+    plt.title(title)
+    plt.show()
+    
 def plot_scatter(df: pd.DataFrame,
                  x: str,
                  y: str,
