@@ -333,6 +333,33 @@ def plot_regression(df: pd.DataFrame,
         sns.scatterplot(data=df, x=x, y=y, hue=hue, palette=palette, legend=False)
     plt.title(f'Regression plot of {y} vs {x}')
     plt.show()
+    
+def plot_line_with_error(df: pd.DataFrame, 
+                         x: str, 
+                         y: str, 
+                         yerr: str, 
+                         hue: str = None, 
+                         palette: str = 'Set1'
+) -> None:
+    """
+    This function plots a line plot with error bars of the specified x and y variables from the input DataFrame. A line plot with error bars is a type of plot that displays the relationship between two variables over time or across different categories, along with the error bars representing the uncertainty in the data.
+   
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the line plot with error bars. This DataFrame should have numerical variables for the line plot to be effective.
+    - x (str): String representing the x-axis column name. This column will be used as the independent variable in the line plot with error bars.
+    - y (str): String representing the y-axis column name. This column will be used as the dependent variable in the line plot with error bars.
+    - yerr (str): String representing the column name for the error bars. This column will be used to calculate the error bars for the line plot with error bars.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None. If provided, the line plot with error bars will be colored based on the values in this column.
+    - palette (str, optional): String representing the color palette for the plot. Default is 'Set1'. This parameter specifies the colors that will be used for the line plot with error bars.
+
+    Returns:
+    - None: This function does not return any value. It only plots the line plot with error bars.
+    """
+    plt.figure(figsize=(10, 6))
+    sns.lineplot(data=df, x=x, y=y, hue=hue, palette=palette, ci=None)
+    plt.errorbar(df[x], df[y], yerr=df[yerr], fmt='o', color='red')
+    plt.title(f'Line plot of {y} with error bars')
+    plt.show()
 
 def plot_roc_curve(fpr_list: list[float], 
                    tpr_list: list[float], 
