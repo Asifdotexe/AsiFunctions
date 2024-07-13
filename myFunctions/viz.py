@@ -4,6 +4,38 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import precision_recall_curve, PrecisionRecallDisplay
 
+def plot_histogram_with_stats(df: pd.DataFrame, 
+                              columns: list[str] = None,
+                              scale: str = 'linear'
+) -> None:
+    """
+    This function plots a histogram with mean and median lines for the specified data series in the input DataFrame.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data series for which to generate the histogram. This DataFrame should have numerical variables for the histogram to be effective.
+    - columns (list[str], optional): List of column names in the input DataFrame for which to generate the histogram. If not provided, all numerical columns will be used. Default is None.
+    - scale (str, optional): String representing the scale for the y-axis of the histogram. Default is 'linear'.
+
+    Returns:
+    - None: This function does not return any value. It only plots the histogram with mean and median lines.
+
+    Example usage:
+    >>> # Plot a histogram with mean and median lines for the 'number_of_appliances' column
+    >>> plot_histogram_with_stats(df, columns=['number_of_appliances'])
+    """
+    if columns is None:
+        columns = df.describe().columns.to_list()
+    
+    for column in columns:
+        sns.histplot(df[column])
+        plt.axvline(df[column].mean(), color='r', linestyle='--')
+        plt.axvline(df[column].median(), color='g', linestyle='-')
+        
+        plt.legend({'Mean': df[column].mean(), 'Median': df[column].median()})
+        plt.title(f'Histogram of {column}')
+        plt.yscale(scale)
+        plt.show()
+
 def plot_correlation_heatmap(df: pd.DataFrame,
                              annot: bool = True,
                              fmt: str = '.2f',
