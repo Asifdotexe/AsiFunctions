@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import precision_recall_curve, PrecisionRecallDisplay
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
 def plot_histogram_with_stats(df: pd.DataFrame, 
                               columns: list[str] = None,
@@ -259,6 +260,29 @@ def plot_roc_curve(fpr_list: list[float],
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+    
+def plot_confusion_matrix(y_true: pd.DataFrame, 
+                          y_pred: pd.DataFrame, 
+                          labels: list[str] = None
+)-> None:
+    """
+    Plot a confusion matrix.
+
+    A confusion matrix is a table that is often used to describe the performance of a classification model on a set of test data for which the true values are also known.
+    
+    Parameters:
+    - y_true: True labels. This is the actual class labels of the test data.
+    - y_pred: Predicted labels. This is the predicted class labels of the test data by the model.
+    - labels: List of class labels (default is None). If provided, the confusion matrix will be labeled with these class names. If not provided, the confusion matrix will be labeled with 'True' and 'False' by default.
+
+    Returns:
+    - None: This function does not return any value. It only plots the confusion matrix.
+    """
+    cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=labels)
+    display_labels = labels if labels is not None else ['True', 'False']
+
+    cm_display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=display_labels)
+    cm_display.plot()
     
 def plot_feature_importance(importance_df: pd.DataFrame) -> None:
     """
