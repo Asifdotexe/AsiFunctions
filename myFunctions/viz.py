@@ -38,6 +38,34 @@ def plot_histogram_with_stats(df: pd.DataFrame,
         plt.yscale(scale)
         plt.show()
 
+def plot_bar(df: pd.DataFrame, 
+             x: str, 
+             y: str, 
+             hue: str = None, 
+             palette: str = 'Set1'
+) -> None:
+    """
+    This function plots a bar plot of the specified x and y variables from the input DataFrame. A bar plot is a type of plot that displays the frequency or count of data points in different categories.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the bar plot. This DataFrame should have numerical variables for the bar plot to be effective.
+    - x (str): String representing the x-axis column name. This column will be used as the categories for the bar plot.
+    - y (str): String representing the y-axis column name. This column will be used as the values for the bar plot.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None. If provided, the bar plot will be colored based on the values in this column.
+    - palette (str, optional): String representing the color palette for the plot. Default is 'Set1'. This parameter specifies the colors that will be used for the bars in the plot.
+
+    Returns:
+    - None: This function does not return any value. It only plots the bar plot.
+
+    Example usage:
+    >>> # Plot a bar plot of 'number_of_appliances' vs 'room_area'
+    >>> plot_bar(df, x='number_of_appliances', y='building_type')
+    """
+    plt.figure(figsize=(10, 6))
+    sns.barplot(data=df, x=x, y=y, hue=hue, palette=palette)
+    plt.title(f'Bar plot of {y} by {x}')
+    plt.show()
+
 def plot_correlation_heatmap(df: pd.DataFrame,
                              annot: bool = True,
                              fmt: str = '.2f',
