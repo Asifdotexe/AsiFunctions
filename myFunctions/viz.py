@@ -63,10 +63,38 @@ def plot_scatter(df: pd.DataFrame,  # Input DataFrame containing the data for th
     None: This function does not return any value. It only plots the scatter plot.
 
     Example usage:
-    >>> # Plot a scatter plot of 'number_of_appliances' vs 'room_area_(sq._ft.)'
+    >>> # Plot a scatter plot of 'number_of_appliances' vs 'room_area'
     >>> plot_scatter(df, x='number_of_appliances', y='room_area')
     """
     plt.figure(figsize=(10, 6))
     sns.scatterplot(data=df, x=x, y=y, hue=hue, style=style, size=size, palette=palette, alpha=alpha)
     plt.title(f'Scatter plot of {y} vs {x}')
+    plt.show()
+    
+def plot_box(df: pd.DataFrame,  # Input DataFrame containing the data for the box plot
+             x: str,  # String representing the x-axis column name
+             y: str,  # String representing the y-axis column name
+             hue: str = None,  # Optional string representing the categorical variable for coloring the plot (default is None)
+             palette: str = 'Set1'  # String representing the color palette for the plot (default is 'Set1')
+) -> None:  # This function plots a box plot of the specified x and y variables from the input DataFrame
+    """
+    This function plots a box plot of the specified x and y variables from the input DataFrame.
+
+    Parameters:
+    df (pd.DataFrame): The input DataFrame containing the data for the box plot.
+    x (str): String representing the x-axis column name.
+    y (str): String representing the y-axis column name.
+    hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None.
+    palette (str, optional): String representing the color palette for the plot. Default is 'Set1'.
+
+    Returns:
+    None: This function does not return any value. It only plots the box plot.
+
+    Example usage:
+    >>> # Plot a box plot of 'number_of_appliances' vs 'room_area'
+    >>> plot_box(df, x='number_of_appliances', y='room_area')
+    """
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(data=df, x=x, y=y, hue=hue, palette=palette)
+    plt.title(f'Box plot of {y} by {x}')
     plt.show()
