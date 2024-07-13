@@ -122,6 +122,36 @@ def plot_pair(df: pd.DataFrame,
     sns.pairplot(df, hue=hue, palette=palette)
     plt.show()
     
+def plot_violin(df: pd.DataFrame, 
+                x: str, 
+                y: str, 
+                hue: str = None, 
+                split: bool = False, 
+                palette: str = 'Set1'
+) -> pd.DataFrame:
+    """
+    This function plots a violin plot of the specified x and y variables from the input DataFrame. A violin plot is a type of plot that displays the distribution of a variable and its underlying density.
+
+    Parameters:
+    - df (pd.DataFrame): The input DataFrame containing the data for the violin plot. This DataFrame should have numerical variables for the violin plot to be effective.
+    - x (str): String representing the x-axis column name.
+    - y (str): String representing the y-axis column name.
+    - hue (str, optional): Optional string representing the categorical variable for coloring the plot. Default is None.
+    - split (bool, optional): Boolean representing whether to split the violin plot by the specified hue variable. Default is False.
+    - palette (str, optional): String representing the color palette for the plot. Default is 'Set1'.
+
+    Returns:
+    - pd.DataFrame: The modified DataFrame with the violin plot added. This function does not return any other value.
+
+    Example usage:
+    >>> # Plot a violin plot of 'number_of_appliances' vs 'room_area'
+    >>> plot_violin(df, x='number_of_appliances', y='room_area')
+    """
+    plt.figure(figsize=(10, 6))
+    sns.violinplot(data=df, x=x, y=y, hue=hue, split=split, palette=palette)
+    plt.title(f'Violin plot of {y} by {x}')
+    plt.show()
+    
 def plot_feature_importance(importance_df: pd.DataFrame) -> None:
     """
     Plot feature importance for a model.
