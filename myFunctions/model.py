@@ -48,3 +48,26 @@ def get_feature_importance(x_train: pd.DataFrame,
     importance_df = importance_df.sort_values(by=['importance'], ascending=False).head(top_n)
 
     return importance_df
+
+def check_imbalance(df: pd.DataFrame, class_column: str) -> pd.DataFrame:
+    """
+    Check the distribution of classes in a binary classification column and return as a DataFrame.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame containing the data.
+    - class_column (str): The name of the column containing the class labels.
+
+    Returns:
+    - pd.DataFrame: A DataFrame containing counts and ratios of each class.
+    """
+    class_counts = df[class_column].value_counts()
+    total = class_counts.sum()
+
+    imbalance_df = pd.DataFrame({
+        'Class': class_counts.index,
+        'Count': class_counts.values,
+        'Ratio': class_counts.values / total
+    })
+
+    imbalance_df['Percentage'] = imbalance_df['Ratio'] * 100
+    return imbalance_df
