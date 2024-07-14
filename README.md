@@ -23,7 +23,7 @@ from AsiFunctions import plotting
 # Example usage:
 plotting.plot_function_name(parameters)
 ```
-Replace plot_function_name with the actual function name you want to use and parameters with the required parameters for that function.
+Replace `plot_function_name` with the actual function name you want to use and parameters with the required parameters for that function.
 
 ## Contributing
 Contributions are welcome! If you have any improvements or new features to add, please create a pull request or open an issue on GitHub.
