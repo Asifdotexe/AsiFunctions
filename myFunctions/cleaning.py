@@ -3,6 +3,26 @@ import numpy as np
 from typing import Any
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, LabelEncoder, OneHotEncoder
 
+def standardize_column_names(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    This function standardizes the column names of a pandas DataFrame by converting them to lowercase and replacing spaces with underscores.
+
+    Parameters:
+    df (pd.DataFrame): The input pandas DataFrame with column names to be standardized.
+
+    Returns:
+    pd.DataFrame: The modified pandas DataFrame with standardized column names.
+
+    Example usage:
+    >>> # Standardize the column names
+    >>> df_standardized = standardize_column_names(df)
+
+    >>> # Print the standardized DataFrame
+    >>> print(df_standardized)
+    """
+    df.columns = df.columns.str.lower().str.replace(' ', '_')
+    return df 
+
 def handle_missing_values(df: pd.DataFrame, 
                           strategy: str = 'mean', 
                           fill_value: Any = None
@@ -135,7 +155,8 @@ def scale_data(df: pd.DataFrame,
     else:
         raise ValueError("Invalid scaler. Choose from 'standard', 'minmax', or 'robust'.")
     
-    df[columns] = scaler.fit_transform(df[columns])
+    for column in columns:
+        df[f'scaled_{column}'] = scaler.fit_transform(df[[column]])
     return df
 
 def handle_outliers(df: pd.DataFrame, 
