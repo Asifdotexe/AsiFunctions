@@ -71,7 +71,7 @@ def handle_missing_values(df: pd.DataFrame,
 
 # Function to encode categorical variables
 def encode_categorical(df: pd.DataFrame, 
-                       column: list[str], 
+                       columns: list[str] = None, 
                        encoding: str = 'onehot'
 ) -> pd.DataFrame:
     """
@@ -85,8 +85,9 @@ def encode_categorical(df: pd.DataFrame,
     df : pd.DataFrame
         The input DataFrame containing the data.
 
-    column : list[str]
-        A list of column names that contain categorical variables to encode.
+    columns : list[str], optional
+        A list of column names that contain categorical variables to encode. 
+        If None, columns with object data types will be selected, excluding those with more than 5 unique values.
 
     encoding : str, optional
         The encoding method to use. Options are:
@@ -103,11 +104,16 @@ def encode_categorical(df: pd.DataFrame,
     ValueError
         If an invalid encoding method is specified.
     """
+    if columns is None:
+        columns = df.select_dtypes(include=['object']).columns.tolist()
+        columns = [col for col in columns if df[col].nunique() <= 5]
+
     if encoding == 'onehot':
-        return pd.get_dummies(df, columns=[column])
+        return pd.get_dummies(df, columns=columns, drop_first=True)
     elif encoding == 'label':
         le = LabelEncoder()
-        df[column] = le.fit_transform(df[column])
+        for column in columns:
+            df[column] = le.fit_transform(df[column])
         return df
     else:
         raise ValueError("Invalid encoding. Choose from 'onehot' or 'label'.")

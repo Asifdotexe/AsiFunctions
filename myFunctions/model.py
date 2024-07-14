@@ -1,5 +1,17 @@
 import pandas as pd
 import numpy as np
+from typing import Any
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    mean_absolute_error,
+    mean_squared_error,
+    r2_score
+)
 
 def get_feature_importance(x_train: pd.DataFrame,
                            model: object,
@@ -71,3 +83,131 @@ def check_imbalance(df: pd.DataFrame, class_column: str) -> pd.DataFrame:
 
     imbalance_df['Percentage'] = imbalance_df['Ratio'] * 100
     return imbalance_df
+
+def assess_performance(score: float, metric_type: str) -> str:
+    """
+    Determine the inference based on the score and metric type.
+
+    Parameters
+    ----------
+    score : float
+        The score to be evaluated.
+    metric_type : str
+        The type of metric used to evaluate the score.
+
+    Returns
+    -------
+    str
+        A string indicating the inference based on the score and metric type.
+
+    The function takes a score and a metric type as input and returns a string indicating the inference based on the score and metric type. The inference is categorized as 'Good', 'Decent', or 'Bad' depending on the score and the metric type.
+
+    The function first checks if the metric type is one of ['Accuracy', 'Precision', 'Recall', 'F1 Score', 'ROC AUC']. If it is, the function checks if the score is greater than or equal to 0.8, in which case it returns 'Good'. If the score is greater than or equal to 0.6 but less than 0.8, it returns 'Decent'. Otherwise, it returns 'Bad'.
+
+    If the metric type is one of ['Mean Absolute Error', 'Mean Squared Error'], the function checks if the score is less than 0.5. If it is, it returns 'Good'. If the score is less than 1.0 but greater than or equal to 0.5, it returns 'Decent'. Otherwise, it returns 'Bad'.
+
+    If the metric type is 'R-squared', the function checks if the score is greater than or equal to 0.8. If it is, it returns 'Good'. If the score is greater than or equal to 0.6 but less than 0.8, it returns 'Decent'. Otherwise, it returns 'Bad'.
+
+    If the metric type does not match any of the specified types, the function returns 'Unknown'.
+    """
+    if metric_type in ['Accuracy', 'Precision', 'Recall', 'F1 Score', 'ROC AUC']:
+        if score >= 0.8:
+            return 'Good'
+        elif score >= 0.6:
+            return 'Decent'
+        else:
+            return 'Bad'
+    elif metric_type in ['Mean Absolute Error', 'Mean Squared Error']:
+        if score <= 0.5:
+            return 'Good'
+        elif score <= 1.0:
+            return 'Decent'
+        else:
+            return 'Bad'
+    elif metric_type == 'R-squared':
+        if score >= 0.8:
+            return 'Good'
+        elif score >= 0.6:
+            return 'Decent'
+        else:
+            return 'Bad'
+    return 'Unknown'
+
+def train_model(data: pd.DataFrame, 
+                target_column: str, 
+                model: Any, 
+                test_size: float = 0.2, 
+                random_state: int = None) -> tuple[Any, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.DataFrame]:
+    """
+    Splits the data into training and testing sets, trains the specified model, 
+    and returns the trained model along with the train/test data and performance metrics.
+
+    Parameters:
+    ----------
+    data : pd.DataFrame
+        The input DataFrame containing features and the target variable.
+
+    target_column : str
+        The name of the column containing the target variable.
+
+    model : Any
+        An instantiated machine learning model object to be trained.
+
+    test_size : float, optional
+        Proportion of the dataset to include in the test split (default is 0.2).
+
+    random_state : int, optional
+        Random seed for reproducibility (default is None).
+
+    Returns:
+    -------
+    Tuple[Any, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.DataFrame]
+        A tuple containing the trained model, training features, 
+        testing features, training target, testing target, and performance metrics as a DataFrame.
+    """
+    # Separate features and target
+    X = data.drop(columns=[target_column])
+    y = data[target_column]
+
+    # Perform train-test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, 
+                                                        test_size=test_size, 
+                                                        random_state=random_state)
+
+    # Train the model
+    model.fit(X_train, y_train)
+
+    # Generate predictions
+    y_pred = model.predict(X_test)
+
+    # Create an empty DataFrame for performance metrics
+    performance_metrics = pd.DataFrame(columns=['Metric', 'Score', 'Inference'])
+
+    # Choose performance metrics based on the type of model
+    if hasattr(model, "predict_proba"):  # Likely a classification model
+        metrics = {
+            'Accuracy': accuracy_score(y_test, y_pred),
+            'Precision': precision_score(y_test, y_pred),
+            'Recall': recall_score(y_test, y_pred),
+            'F1 Score': f1_score(y_test, y_pred),
+            'ROC AUC': roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])
+        }
+    else:  # Likely a regression model
+        metrics = {
+            'Mean Absolute Error': mean_absolute_error(y_test, y_pred),
+            'Mean Squared Error': mean_squared_error(y_test, y_pred),
+            'R-squared': r2_score(y_test, y_pred)
+        }
+
+    # Populate the performance metrics DataFrame
+    for metric, score in metrics.items():
+        performance_metrics = pd.concat([
+            performance_metrics, 
+            pd.DataFrame({
+                'Metric': [metric], 
+                'Score': [score], 
+                'Inference': [assess_performance(score, metric)]
+            })
+        ], ignore_index=True)
+
+    return model, X_train, X_test, y_train, y_test, performance_metrics
