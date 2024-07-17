@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from typing import Any
+import scipy.stats as stats
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score,
@@ -83,6 +84,62 @@ def check_imbalance(df: pd.DataFrame, class_column: str) -> pd.DataFrame:
 
     imbalance_df['Percentage'] = imbalance_df['Ratio'] * 100
     return imbalance_df
+
+def detect_distribution(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Detects the distribution of the given pandas DataFrame columns.
+    
+    Parameters:
+    data (pd.DataFrame): Input DataFrame with numerical columns to analyze.
+    
+    Returns:
+    dict: A dictionary with the column names as keys and distribution descriptions as values.
+    
+    Examples:
+    >>> detect_distribution(data)
+    {'normal': 'Normally distributed', 'uniform': 'Uniformly distributed', 
+    'right_skewed': 'Right skewed', 'left_skewed': 'Left skewed'}
+    
+    Notes:
+    - Shapiro-Wilk Test: A statistical test for normality. A high p-value (>0.05) suggests normal distribution.
+    - Anderson-Darling Test: Another test for normality with critical values to compare against the test statistic.
+    - Skewness: Measures the asymmetry of the data distribution. Positive skew indicates right skew, and negative skew indicates left skew.
+    """
+    results = {}
+    
+    for column in df.columns:
+        if pd.api.types.is_numeric_dtype(df[column]):
+            col_data = df[column].dropna()
+            
+            # Shapiro-Wilk Test for Normality
+            # Shapiro-Wilk Test: A statistical test for normality. 
+            # A high p-value (>0.05) suggests normal distribution.
+            shapiro_test = stats.shapiro(col_data)
+            
+            # Anderson-Darling Test for Normality
+            # Anderson-Darling Test: Another test for normality with critical values 
+            # to compare against the test statistic.
+            ad_test = stats.anderson(col_data, dist='norm')
+            
+            # Skewness
+            # Skewness: Measures the asymmetry of the data distribution. 
+            # Positive skew indicates right skew, and negative skew indicates left skew.
+            skewness = stats.skew(col_data)
+            
+            distribution = "Unknown distribution"
+            
+            if shapiro_test.pvalue > 0.05 and ad_test.statistic < ad_test.critical_values[2]:
+                distribution = "Normally distributed"
+            elif skewness > 0.5:
+                distribution = "Right skewed"
+            elif skewness < -0.5:
+                distribution = "Left skewed"
+            else:
+                distribution = "Uniformly distributed"
+            
+            results[column] = distribution
+    
+    return results
 
 def assess_performance(score: float, metric_type: str) -> str:
     """
