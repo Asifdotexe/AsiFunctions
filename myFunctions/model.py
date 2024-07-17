@@ -85,12 +85,16 @@ def check_imbalance(df: pd.DataFrame, class_column: str) -> pd.DataFrame:
     imbalance_df['Percentage'] = imbalance_df['Ratio'] * 100
     return imbalance_df
 
-def detect_distribution(df: pd.DataFrame) -> pd.DataFrame:
+def detect_distribution(df: pd.DataFrame, 
+                        columns: list[str]) -> pd.DataFrame:
     """
     Detects the distribution of the given pandas DataFrame columns.
     
     Parameters:
     data (pd.DataFrame): Input DataFrame with numerical columns to analyze.
+    
+    columns (list[str]): List of column names to consider for outlier removal.
+        If None, all numeric columns in the DataFrame will be used.
     
     Returns:
     dict: A dictionary with the column names as keys and distribution descriptions as values.
@@ -105,24 +109,27 @@ def detect_distribution(df: pd.DataFrame) -> pd.DataFrame:
     - Anderson-Darling Test: Another test for normality with critical values to compare against the test statistic.
     - Skewness: Measures the asymmetry of the data distribution. Positive skew indicates right skew, and negative skew indicates left skew.
     """
+    if columns is None:
+        columns = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
+    
     results = {}
     
-    for column in df.columns:
+    for column in columns:
         if pd.api.types.is_numeric_dtype(df[column]):
             col_data = df[column].dropna()
             
             # Shapiro-Wilk Test for Normality
-            # Shapiro-Wilk Test: A statistical test for normality. 
+            # Shapiro-Wilk Test: A statistical test for normality.
             # A high p-value (>0.05) suggests normal distribution.
             shapiro_test = stats.shapiro(col_data)
             
             # Anderson-Darling Test for Normality
-            # Anderson-Darling Test: Another test for normality with critical values 
+            # Anderson-Darling Test: Another test for normality with critical values
             # to compare against the test statistic.
             ad_test = stats.anderson(col_data, dist='norm')
             
             # Skewness
-            # Skewness: Measures the asymmetry of the data distribution. 
+            # Skewness: Measures the asymmetry of the data distribution.
             # Positive skew indicates right skew, and negative skew indicates left skew.
             skewness = stats.skew(col_data)
             

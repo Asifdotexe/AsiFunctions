@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from typing import Any
+import scipy.stats as stats
+from myFunctions.model import detect_distribution
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, LabelEncoder, OneHotEncoder
 
 def standardize_column_names(df: pd.DataFrame) -> pd.DataFrame:
@@ -165,54 +167,54 @@ def scale_data(df: pd.DataFrame,
         df[f'scaled_{column}'] = scaler.fit_transform(df[[column]])
     return df
 
-def handle_outliers(df: pd.DataFrame, 
-                    columns: list[str], 
-                    method: str = 'zscore', 
-                    threshold: float = 3.0
+def remove_outliers(df: pd.DataFrame,
+                    columns: list[str],
+                    zscore_threshold: float = 3.0
 ) -> pd.DataFrame:
     """
-    Handle outliers in the specified columns of a DataFrame using the chosen method.
-
-    This function removes rows containing outliers based on either the Z-score or 
-    the Interquartile Range (IQR) method.
-
+    Removes outliers from the given pandas DataFrame columns based on their distribution.
+    
     Parameters:
-    ----------
-    df : pd.DataFrame
-        The input DataFrame containing the data.
-
-    columns : list[str]
-        A list of column names in which to detect and handle outliers.
-
-    method : str, optional
-        The method to use for outlier detection. Options are:
-        - 'zscore': Use Z-score to identify outliers (default).
-        - 'iqr': Use Interquartile Range (IQR) to identify outliers.
-
-    threshold : float, optional
-        The threshold value for outlier detection when using the Z-score method (default is 3.0).
-
+    df (pd.DataFrame): Input DataFrame with numerical columns to clean.
+        The DataFrame should contain numerical columns specified in the 'columns' parameter.
+    
+    columns (list[str]): List of column names to consider for outlier removal.
+        If None, all numeric columns in the DataFrame will be used.
+    
+    zscore_threshold (float): Z-score threshold for identifying outliers.
+        Default is 3.0, which means data points with a Z-score greater than 3.0 will be considered outliers.
+    
     Returns:
-    -------
-    pd.DataFrame
-        A DataFrame with outliers removed from the specified columns.
-
-    Raises:
-    ------
-    ValueError
-        If an invalid method is specified.
+    pd.DataFrame: DataFrame with outliers removed.
+        The returned DataFrame will have the same columns as the input DataFrame, but without the outliers.
+    
+    Examples:
+    >>> remove_outliers(df)
     """
-    if method == 'zscore':
-        from scipy.stats import zscore
-        z_scores = np.abs(zscore(df[columns]))
-        return df[(z_scores < threshold).all(axis=1)]
-    elif method == 'iqr':
-        Q1 = df[columns].quantile(0.25)
-        Q3 = df[columns].quantile(0.75)
-        IQR = Q3 - Q1
-        return df[~((df[columns] < (Q1 - 1.5 * IQR)) | (df[columns] > (Q3 + 1.5 * IQR))).any(axis=1)]
-    else:
-        raise ValueError("Invalid method. Choose from 'zscore' or 'iqr'.")
+    if columns is None:
+        columns = [col for col in df.columns if pd.api.types.is_numeric_dtype(df[col])]
+    
+    distribution_results = detect_distribution(df[columns])
+    clean_data = df.copy()
+    
+    for column in columns:
+        if column in distribution_results:
+            col_data = df[column].dropna()
+            distribution = distribution_results[column]
+            
+            if distribution == "Normally distributed":
+                # Z-score method
+                z_scores = np.abs(stats.zscore(col_data))
+                clean_data = clean_data[z_scores < zscore_threshold]
+            else:
+                # IQR method
+                Q1 = col_data.quantile(0.25)
+                Q3 = col_data.quantile(0.75)
+                IQR = Q3 - Q1
+                lower_bound = Q1 - 1.5 * IQR
+                upper_bound = Q3 + 1.5 * IQR
+                clean_data = clean_data[(col_data >= lower_bound) & (col_data <= upper_bound)]
+    return clean_data
 
 def extract_datetime_features(df: pd.DataFrame, 
                               column: str) -> pd.DataFrame:
