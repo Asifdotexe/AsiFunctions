@@ -35,14 +35,6 @@ def get_feature_importance(x_train: pd.DataFrame,
     >>> import numpy as np
     >>> from sklearn.ensemble import RandomForestClassifier
     >>>
-    >>> # Create a sample training dataset
-    >>> x_train = pd.DataFrame({
-    ...     'feature1': np.random.randn(100),
-    ...     'feature2': np.random.randn(100),
-    ...     'feature3': np.random.randn(100),
-    ...     'target': np.random.choice(['class1', 'class2'], 100)
-    ... })
-    >>>
     >>> # Train a RandomForestClassifier model
     >>> model = RandomForestClassifier(n_estimators=100, random_state=42)
     >>> model.fit(x_train.drop('target', axis=1), x_train['target'])
