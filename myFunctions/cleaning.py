@@ -9,11 +9,9 @@ def standardize_column_names(df: pd.DataFrame) -> pd.DataFrame:
     """
     This function standardizes the column names of a pandas DataFrame by converting them to lowercase and replacing spaces with underscores.
 
-    Parameters:
-    df (pd.DataFrame): The input pandas DataFrame with column names to be standardized.
+    :param df: The input pandas DataFrame with column names to be standardized.
 
-    Returns:
-    pd.DataFrame: The modified pandas DataFrame with standardized column names.
+    :returns: The modified pandas DataFrame with standardized column names.
 
     Example usage:
     >>> # Standardize the column names
@@ -31,20 +29,19 @@ def handle_missing_values(df: pd.DataFrame,
 ) -> pd.DataFrame:
     """
     This function handles missing values in a pandas DataFrame based on a specified strategy.
+    
+    :param df: The input DataFrame with missing values.
+    :param strategy: The strategy to handle missing values. It can be one of the following
+        - `mean`: Replace missing values with the mean of the respective column. \n
+        - `median`: Replace missing values with the median of the respective column.
+        - `mode`: Replace missing values with the mode of the respective column.
+        - `ffill`: Replace missing values with the previous valid observation in the DataFrame.
+        - `bfill`: Replace missing values with the next valid observation in the DataFrame.
+        - `constant`: Replace missing values with a specified fill_value.
+    :param fill_value: The value to use when strategy is `constant`. Default is None.
 
-    Parameters:
-    df (pd.DataFrame): The input DataFrame with missing values.
-    strategy (str): The strategy to handle missing values. It can be one of the following:
-        - 'mean': Replace missing values with the mean of the respective column.
-        - 'median': Replace missing values with the median of the respective column.
-        - 'mode': Replace missing values with the mode of the respective column.
-        - 'ffill': Replace missing values with the previous valid observation in the DataFrame.
-        - 'bfill': Replace missing values with the next valid observation in the DataFrame.
-        - 'constant': Replace missing values with a specified fill_value.
-    fill_value (Any): The value to use when strategy is 'constant'. Default is None.
-
-    Returns:
-    pd.DataFrame: The DataFrame with missing values handled according to the specified strategy.
+    
+    :return: The DataFrame with missing values handled according to the specified strategy.
 
     Example:
     >>> import pandas as pd
@@ -82,29 +79,19 @@ def encode_categorical(df: pd.DataFrame,
     This function transforms categorical variables into numerical representations 
     using the specified encoding technique.
 
-    Parameters:
-    ----------
-    df : pd.DataFrame
-        The input DataFrame containing the data.
+    :param df: The input DataFrame containing the data.
 
-    columns : list[str], optional
-        A list of column names that contain categorical variables to encode. 
+    :param columns: A list of column names that contain categorical variables to encode. 
         If None, columns with object data types will be selected, excluding those with more than 5 unique values.
 
-    encoding : str, optional
-        The encoding method to use. Options are:
-        - 'onehot': Perform one-hot encoding (default).
-        - 'label': Perform label encoding.
+    :param encoding:
+        The encoding method to use. Options are: \n
+        - `onehot`: Perform one-hot encoding (default).
+        - `label`: Perform label encoding.
 
-    Returns:
-    -------
-    pd.DataFrame
-        A DataFrame with the specified categorical columns encoded.
+    :returns: A DataFrame with the specified categorical columns encoded.
 
-    Raises:
-    ------
-    ValueError
-        If an invalid encoding method is specified.
+    :raises `ValueError`: If an invalid encoding method is specified.
     """
     if columns is None:
         columns = df.select_dtypes(include=['object']).columns.tolist()
@@ -130,28 +117,18 @@ def scale_data(df: pd.DataFrame,
     This function transforms the specified columns using the chosen scaling method 
     to ensure that the data is in a suitable range for modeling.
 
-    Parameters:
-    ----------
-    df : pd.DataFrame
-        The input DataFrame containing the data to scale.
+    :param df: The input DataFrame containing the data to scale.
 
-    columns : list[str]
-        A list of column names to scale or normalize.
+    :param columns: A list of column names to scale or normalize.
 
-    scaler : str, optional
-        The scaling method to use. Options are:
-        - 'standard': Standardize features by removing the mean and scaling to unit variance (default).
-        - 'minmax': Scale features to a given range (default 0 to 1).
-        - 'robust': Use the median and interquartile range for scaling, which is robust to outliers.
+    :param scaler: The scaling method to use. Options are: \n
+        - `standard`: Standardize features by removing the mean and scaling to unit variance (default).
+        - `minmax`: Scale features to a given range (default 0 to 1).
+        - `robust`: Use the median and interquartile range for scaling, which is robust to outliers.
 
-    Returns:
-    -------
-    pd.DataFrame
-        A DataFrame with the specified columns scaled or normalized.
+    :returns: A DataFrame with the specified columns scaled or normalized.
 
-    Raises:
-    ------
-    ValueError
+    :raises `ValueError`:
         If an invalid scaler method is specified.
     """
     if scaler == 'standard':
@@ -173,19 +150,17 @@ def remove_outliers(df: pd.DataFrame,
 ) -> pd.DataFrame:
     """
     Removes outliers from the given pandas DataFrame columns based on their distribution.
+
+    :param df: Input DataFrame with numerical columns to clean.
+        The DataFrame should contain numerical columns specified in the `columns` parameter.
     
-    Parameters:
-    df (pd.DataFrame): Input DataFrame with numerical columns to clean.
-        The DataFrame should contain numerical columns specified in the 'columns' parameter.
-    
-    columns (list[str]): List of column names to consider for outlier removal.
+    :param columns: List of column names to consider for outlier removal.
         If None, all numeric columns in the DataFrame will be used.
     
-    zscore_threshold (float): Z-score threshold for identifying outliers.
+    :param zscore_threshold: Z-score threshold for identifying outliers.
         Default is 3.0, which means data points with a Z-score greater than 3.0 will be considered outliers.
     
-    Returns:
-    pd.DataFrame: DataFrame with outliers removed.
+    :returns: DataFrame with outliers removed.
         The returned DataFrame will have the same columns as the input DataFrame, but without the outliers.
     
     Examples:
@@ -224,19 +199,12 @@ def extract_datetime_features(df: pd.DataFrame,
     This function converts the specified column to datetime format and creates
     new columns representing the year, month, day, hour, minute, and second.
 
-    Parameters:
-    ----------
-    df : pd.DataFrame
-        The input DataFrame containing the data.
+    :param df: The input DataFrame containing the data.
 
-    column : str
-        The name of the column from which to extract datetime features.
+    :param column: The name of the column from which to extract datetime features.
 
-    Returns:
-    -------
-    pd.DataFrame
-        A DataFrame with additional columns for year, month, day, hour, 
-        minute, and second extracted from the specified datetime column.
+    :returns: A DataFrame with additional columns for `year`, `month`, `day`, `hour`, 
+        `minute`, and `second` extracted from the specified datetime column.
     """
     df[column] = pd.to_datetime(df[column])
     df[column + '_year'] = df[column].dt.year
