@@ -68,41 +68,33 @@ def handle_missing_values(df: pd.DataFrame,
 # Function to encode categorical variables
 def encode_categorical(df: pd.DataFrame, 
                        columns: list[str] = None, 
-                       encoding: str = 'onehot'
+                       encoding: str = 'onehot',
+                       threshold: int = 5
 ) -> pd.DataFrame:
     """
-    Encode categorical variables in a DataFrame.
+    Encode categorical variables in a DataFrame using specified encoding technique.
 
-    This function transforms categorical variables into numerical representations 
-    using the specified encoding technique.
-
-    :param df: The input DataFrame containing the data.
-
-    :param columns: A list of column names that contain categorical variables to encode. 
-        If None, columns with object data types will be selected, excluding those with more than 5 unique values.
-
-    :param encoding:
-        The encoding method to use. Options are: \n
-        - `onehot`: Perform one-hot encoding (default).
-        - `label`: Perform label encoding.
-
-    :returns: A DataFrame with the specified categorical columns encoded.
-
-    :raises `ValueError`: If an invalid encoding method is specified.
+    :param df: Input DataFrame with data.
+    :param columns: List of column names for categorical variables to encode. 
+                    If None, selects object-type columns with <= 5 unique values.
+    :param encoding: Encoding method: 'onehot' (default) or 'label'.
+    :param threshold: the number of unique values at max in a column to qualify for encoding.
+                    Defaults to 5.
+    :returns: DataFrame with encoded categorical columns.
     """
     if columns is None:
-        columns = df.select_dtypes(include=['object']).columns.tolist()
-        columns = [col for col in columns if df[col].nunique() <= 5]
-
+        columns = [column for column in df.select_dtypes(include='object')
+                   if df[column].nunique() <= 5]
+    
     if encoding == 'onehot':
         return pd.get_dummies(df, columns=columns, drop_first=True)
-    elif encoding == 'label':
+    
+    if encoding == 'label':
         le = LabelEncoder()
-        for column in columns:
-            df[column] = le.fit_transform(df[column])
+        df[columns] = df[columns].apply(lambda column: le.fit_transform(column))
         return df
-    else:
-        raise ValueError("Invalid encoding. Choose from 'onehot' or 'label'.")
+    
+    raise ValueError(f"Invalid encoding: {encoding}. Choose from 'onehot' or 'label'.")
 
 def scale_data(df: pd.DataFrame, 
                columns: list[str], 
