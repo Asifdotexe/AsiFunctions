@@ -53,20 +53,17 @@ def handle_missing_values(df: pd.DataFrame,
     >>> df_filled = handle_missing_values(df, strategy='mean')
     >>> print(df_filled)
     """
-    if strategy == 'mean':
-        return df.fillna(df.mean())
-    elif strategy == 'median':
-        return df.fillna(df.median())
-    elif strategy == 'mode':
-        return df.fillna(df.mode().iloc[0])
-    elif strategy == 'ffill':
-        return df.fillna(method='ffill')
-    elif strategy == 'bfill':
-        return df.fillna(method='bfill')
-    elif strategy == 'constant':
-        return df.fillna(fill_value)
-    else:
-        raise ValueError("Invalid strategy. Choose from 'mean', 'median', 'mode', 'ffill', 'bfill', or 'constant'.")
+    strategies = {
+        'mean': df.mean,
+        'median': df.median,
+        'mode': lambda: df.mode().iloc[0],
+        'ffill': lambda: df.fillna(method='ffill'),
+        'bfill': lambda: df.fillna(method='bfill'),
+        'constant': lambda: df.fillna(fill_value)
+    }
+    
+    if strategy in strategies:
+        raise ValueError('Invalid strategy: {strategy}.')
 
 # Function to encode categorical variables
 def encode_categorical(df: pd.DataFrame, 
